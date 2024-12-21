@@ -9,15 +9,15 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/edwarq/testdevops.git'
+                git branch: 'main', url: 'https://github.com/edwarq/testdevops.git'  // Asegúrate de usar la rama 'main'
             }
         }
 
         stage('Terraform Init') {
             steps {
                 script {
-                    withCredentials([aws(credentialsId: 'aws-credentials-id', region: 'us-east-1')]) {
-                        sh 'terraform init'
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id', region: 'us-east-1']]) {
+                        sh 'terraform init'  // Inicializa Terraform
                     }
                 }
             }
@@ -26,8 +26,8 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 script {
-                    withCredentials([aws(credentialsId: 'aws-credentials-id', region: 'us-east-1')]) {
-                        sh 'terraform plan'
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id', region: 'us-east-1']]) {
+                        sh 'terraform plan'  // Crea el plan de ejecución de Terraform
                     }
                 }
             }
@@ -36,8 +36,8 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 script {
-                    withCredentials([aws(credentialsId: 'aws-credentials-id', region: 'us-east-1')]) {
-                        sh 'terraform apply -auto-approve'
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id', region: 'us-east-1']]) {
+                        sh 'terraform apply -auto-approve'  // Aplica los cambios de Terraform
                     }
                 }
             }
@@ -46,8 +46,8 @@ pipeline {
         stage('Clean Up') {
             steps {
                 script {
-                    withCredentials([aws(credentialsId: 'aws-credentials-id', region: 'us-east-1')]) {
-                        sh 'terraform destroy -auto-approve'
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id', region: 'us-east-1']]) {
+                        sh 'terraform destroy -auto-approve'  // Destruye los recursos creados por Terraform
                     }
                 }
             }
